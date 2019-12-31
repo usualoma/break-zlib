@@ -1,5 +1,5 @@
 main: main.c mysql.so zlib.so
-	gcc -rdynamic -ldl main.c -o main
+	gcc -ldl main.c -o main
 
 mysql.so: mysql.c
 	gcc -I/usr/include/mysql -m64 -L/usr/lib64/mysql --shared /usr/lib64/mysql/libmysqlclient.so.18 mysql.c -o mysql.so
