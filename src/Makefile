@@ -1,3 +1,5 @@
+RUNNER="env"
+
 main: main.c mysql.so zlib.so
 	gcc -ldl main.c -o main
 
@@ -17,14 +19,21 @@ run:
 		run-without-mysql-load-zlib \
 		run-without-mysql-load-libmysqlclient
 
+run-via-gdb:
+	${MAKE} RUNNER="gdb --quiet --init-command=main-gdbinit --command=main-gdbcommand --batch --args" \
+		run-with-mysql \
+		run-without-mysql \
+		run-without-mysql-load-zlib \
+		run-without-mysql-load-libmysqlclient
+
 run-with-mysql: main
-	./main ./mysql.so
+	${RUNNER} ./main ./mysql.so
 
 run-without-mysql: main
-	./main
+	${RUNNER} ./main
 
 run-without-mysql-load-zlib: main
-	LD_PRELOAD="/usr/lib64/libz.so.1" ./main ./mysql.so
+	LD_PRELOAD="/usr/lib64/libz.so.1" ${RUNNER} ./main ./mysql.so
 
 run-without-mysql-load-libmysqlclient: main
-	LD_PRELOAD="/usr/lib64/mysql/libmysqlclient.so.18" ./main ./mysql.so
+	LD_PRELOAD="/usr/lib64/mysql/libmysqlclient.so.18" ${RUNNER} ./main ./mysql.so
